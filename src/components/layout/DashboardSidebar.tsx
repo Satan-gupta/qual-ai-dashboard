@@ -27,13 +27,13 @@ const DashboardSidebar = ({ isCollapsed, activeTab, onTabChange, onNewStudy }: D
 
   return (
     <div className={cn(
-      "bg-white border-r border-gray-200 transition-all duration-300 flex flex-col",
+      "bg-white border-r border-gray-200 transition-all duration-300 flex flex-col shadow-lg",
       isCollapsed ? "w-16" : "w-64"
     )}>
       <div className="p-4">
         {!isCollapsed && (
           <div className="flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-orange-500 rounded-lg flex items-center justify-center shadow-md">
               <span className="text-white font-bold text-sm">Q</span>
             </div>
             <span className="font-semibold text-gray-900">Qwalo.ai</span>
@@ -42,13 +42,13 @@ const DashboardSidebar = ({ isCollapsed, activeTab, onTabChange, onNewStudy }: D
         
         <Button 
           className={cn(
-            "w-full justify-start gap-2 mb-4 bg-blue-500 hover:bg-blue-600",
+            "w-full justify-start gap-2 mb-4 bg-gradient-to-r from-blue-500 to-orange-500 hover:from-blue-600 hover:to-orange-600 text-white shadow-md",
             isCollapsed && "px-2"
           )}
           onClick={onNewStudy}
         >
           <Plus className="h-4 w-4" />
-          {!isCollapsed && "New Study"}
+          {!isCollapsed && "New Project"}
         </Button>
       </div>
 
@@ -58,9 +58,9 @@ const DashboardSidebar = ({ isCollapsed, activeTab, onTabChange, onNewStudy }: D
             key={item.id}
             variant={activeTab === item.id ? "secondary" : "ghost"}
             className={cn(
-              "w-full justify-start gap-3 mb-1 h-12",
+              "w-full justify-start gap-3 mb-1 h-12 transition-colors",
               isCollapsed && "px-3",
-              activeTab === item.id && "bg-blue-50 text-blue-700 border-r-2 border-blue-500"
+              activeTab === item.id && "bg-gradient-to-r from-blue-50 to-orange-50 text-blue-700 border-r-2 border-blue-500"
             )}
             onClick={() => onTabChange(item.id)}
           >

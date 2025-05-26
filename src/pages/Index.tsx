@@ -18,7 +18,7 @@ const Index = () => {
   const [currentStep, setCurrentStep] = useState(1);
 
   const steps = [
-    { id: 1, label: 'Study setup', component: StudySetup },
+    { id: 1, label: 'Project setup', component: StudySetup },
     { id: 2, label: 'Guiding questions', component: GuidingQuestions },
     { id: 3, label: 'Form review', component: FormReview },
     { id: 4, label: 'Recruitment', component: RecruitmentSetup },
@@ -34,7 +34,7 @@ const Index = () => {
             <div className="flex items-center justify-between mb-4">
               <Button 
                 variant="ghost" 
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
                 onClick={() => setShowNewStudy(false)}
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -48,9 +48,9 @@ const Index = () => {
                   <React.Fragment key={step.id}>
                     <div className="flex items-center">
                       <div 
-                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium cursor-pointer ${
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium cursor-pointer transition-all ${
                           step.id === currentStep 
-                            ? 'bg-blue-500 text-white' 
+                            ? 'bg-gradient-to-r from-blue-500 to-orange-500 text-white shadow-lg' 
                             : step.id < currentStep
                             ? 'bg-green-500 text-white'
                             : 'bg-gray-200 text-gray-600'
@@ -59,14 +59,14 @@ const Index = () => {
                       >
                         {step.id}
                       </div>
-                      <span className={`ml-2 text-sm ${
+                      <span className={`ml-2 text-sm transition-colors ${
                         step.id === currentStep ? 'text-blue-600 font-medium' : 'text-gray-600'
                       }`}>
                         {step.label}
                       </span>
                     </div>
                     {index < steps.length - 1 && (
-                      <div className={`w-12 h-px ${
+                      <div className={`w-12 h-px transition-colors ${
                         step.id < currentStep ? 'bg-green-500' : 'bg-gray-200'
                       }`} />
                     )}
@@ -84,6 +84,7 @@ const Index = () => {
               variant="outline"
               onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
               disabled={currentStep === 1}
+              className="border-gray-300"
             >
               <ChevronLeft className="h-4 w-4 mr-2" />
               Previous
@@ -91,7 +92,7 @@ const Index = () => {
             <Button 
               onClick={() => setCurrentStep(Math.min(steps.length, currentStep + 1))}
               disabled={currentStep === steps.length}
-              className="bg-blue-500 hover:bg-blue-600"
+              className="bg-gradient-to-r from-blue-500 to-orange-500 hover:from-blue-600 hover:to-orange-600 text-white"
             >
               Next
               <ChevronRight className="h-4 w-4 ml-2" />
@@ -125,7 +126,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex w-full">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex w-full">
       <DashboardSidebar 
         isCollapsed={sidebarCollapsed}
         activeTab={activeTab}
