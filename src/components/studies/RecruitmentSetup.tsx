@@ -1,17 +1,24 @@
-
 import React, { useState } from 'react';
-import { Users, Network, DollarSign, Link, Share2 } from 'lucide-react';
+import { Users, Network, DollarSign, Link, Share2, Instagram, MessageCircle, Facebook, Twitter, Lock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
+import { Badge } from '@/components/ui/badge';
 
 const RecruitmentSetup = () => {
-  const [recruitmentType, setRecruitmentType] = useState('managed');
+  const [recruitmentType, setRecruitmentType] = useState('self');
   const [audienceType, setAudienceType] = useState('b2c');
   const [ageRange, setAgeRange] = useState([18, 65]);
   const [respondentCount, setRespondentCount] = useState(50);
+
+  const socialPlatforms = [
+    { name: 'WhatsApp', icon: MessageCircle, color: 'text-green-600', bgColor: 'bg-green-50', hoverColor: 'hover:bg-green-100' },
+    { name: 'Instagram', icon: Instagram, color: 'text-pink-600', bgColor: 'bg-pink-50', hoverColor: 'hover:bg-pink-100' },
+    { name: 'Facebook', icon: Facebook, color: 'text-blue-600', bgColor: 'bg-blue-50', hoverColor: 'hover:bg-blue-100' },
+    { name: 'Twitter', icon: Twitter, color: 'text-sky-600', bgColor: 'bg-sky-50', hoverColor: 'hover:bg-sky-100' },
+  ];
 
   return (
     <div className="space-y-6">
@@ -23,40 +30,70 @@ const RecruitmentSetup = () => {
       </div>
 
       {/* Recruitment Type Selection */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <Card 
-          className={`border-2 cursor-pointer transition-all ${
-            recruitmentType === 'managed' 
-              ? 'border-blue-500 bg-blue-50' 
-              : 'border-gray-200 hover:border-gray-300'
-          }`}
-          onClick={() => setRecruitmentType('managed')}
-        >
-          <CardContent className="p-6">
-            <div className="text-center">
-              <Network className="h-12 w-12 text-blue-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Managed recruitment</h3>
-              <p className="text-sm text-gray-600">
-                Integrate with a panel of respondents to recruit participants for your study
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <Card 
           className={`border-2 cursor-pointer transition-all ${
             recruitmentType === 'self' 
-              ? 'border-blue-500 bg-blue-50' 
+              ? 'border-orange-500 bg-orange-50' 
               : 'border-gray-200 hover:border-gray-300'
           }`}
           onClick={() => setRecruitmentType('self')}
         >
           <CardContent className="p-6">
             <div className="text-center">
-              <Share2 className="h-12 w-12 text-green-500 mx-auto mb-4" />
+              <Share2 className="h-12 w-12 text-orange-500 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Self-recruitment</h3>
               <p className="text-sm text-gray-600">
                 Share your study link directly with your own participants and networks
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className={`border-2 cursor-not-allowed transition-all opacity-60 ${
+            recruitmentType === 'managed' 
+              ? 'border-blue-500 bg-blue-50' 
+              : 'border-gray-200'
+          }`}
+        >
+          <CardContent className="p-6 relative">
+            <div className="text-center">
+              <Network className="h-12 w-12 text-blue-500 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center justify-center gap-2">
+                Managed recruitment
+                <Lock className="h-4 w-4" />
+              </h3>
+              <p className="text-sm text-gray-600">
+                Integrate with a panel of respondents to recruit participants for your study
+              </p>
+            </div>
+            <Badge 
+              variant="outline" 
+              className="absolute top-2 right-2 bg-orange-100 text-orange-600 border-orange-300 text-xs"
+            >
+              Coming Soon
+            </Badge>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className={`border-2 cursor-pointer transition-all ${
+            recruitmentType === 'combined' 
+              ? 'border-purple-500 bg-purple-50' 
+              : 'border-gray-200 hover:border-gray-300'
+          }`}
+          onClick={() => setRecruitmentType('combined')}
+        >
+          <CardContent className="p-6">
+            <div className="text-center">
+              <div className="flex justify-center items-center gap-2 mb-4">
+                <Network className="h-8 w-8 text-purple-500" />
+                <Share2 className="h-8 w-8 text-purple-500" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Combined Study</h3>
+              <p className="text-sm text-gray-600">
+                Use both managed recruitment and self-sharing to maximize responses
               </p>
             </div>
           </CardContent>
@@ -65,8 +102,65 @@ const RecruitmentSetup = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-6">
-          {recruitmentType === 'managed' ? (
+          {recruitmentType === 'self' || recruitmentType === 'combined' ? (
             <Card>
+              <CardContent className="p-6">
+                <div className="space-y-6">
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-3">Study Link</h4>
+                    <p className="text-sm text-gray-600 mb-3">
+                      Share this link with your participants to start collecting responses.
+                    </p>
+                    <div className="flex gap-2 mb-4">
+                      <Input 
+                        value="https://qwalo.ai/study/abc123xyz"
+                        readOnly
+                        className="flex-1"
+                      />
+                      <Button variant="outline">
+                        <Link className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-3">Share on Social Media</h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      {socialPlatforms.map((platform) => (
+                        <Button
+                          key={platform.name}
+                          variant="outline"
+                          className={`flex items-center gap-2 ${platform.bgColor} ${platform.hoverColor} border-gray-200`}
+                        >
+                          <platform.icon className={`h-4 w-4 ${platform.color}`} />
+                          <span className="text-sm">{platform.name}</span>
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-3">Target Number of Respondents</h4>
+                    <Input 
+                      type="number" 
+                      value={respondentCount}
+                      onChange={(e) => setRespondentCount(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-3">Participant Incentives</h4>
+                    <Textarea 
+                      placeholder="e.g., Gift cards, discounts, early access to products..."
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="opacity-60">
               <CardContent className="p-6">
                 <div className="space-y-6">
                   <div>
@@ -165,94 +259,11 @@ const RecruitmentSetup = () => {
                 </div>
               </CardContent>
             </Card>
-          ) : (
-            <Card>
-              <CardContent className="p-6">
-                <div className="space-y-6">
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-3">Study Link</h4>
-                    <p className="text-sm text-gray-600 mb-3">
-                      Share this link with your participants to start collecting responses.
-                    </p>
-                    <div className="flex gap-2">
-                      <Input 
-                        value="https://qwalo.ai/study/abc123xyz"
-                        readOnly
-                        className="flex-1"
-                      />
-                      <Button variant="outline">
-                        <Link className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-3">Target Number of Respondents</h4>
-                    <p className="text-sm text-gray-600 mb-3">
-                      How many participants do you aim to recruit?
-                    </p>
-                    <Input 
-                      type="number" 
-                      value={respondentCount}
-                      onChange={(e) => setRespondentCount(Number(e.target.value))}
-                      className="w-full"
-                    />
-                  </div>
-
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-3">Recruitment Strategy</h4>
-                    <p className="text-sm text-gray-600 mb-3">
-                      Describe how you plan to reach your target participants.
-                    </p>
-                    <Textarea 
-                      placeholder="e.g., Social media posts, email lists, existing customer base, community forums..."
-                      className="w-full"
-                    />
-                  </div>
-
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-3">Participant Incentives</h4>
-                    <p className="text-sm text-gray-600 mb-3">
-                      What incentives will you offer to encourage participation?
-                    </p>
-                    <Textarea 
-                      placeholder="e.g., Gift cards, discounts, early access to products..."
-                      className="w-full"
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           )}
         </div>
 
         <div>
-          {recruitmentType === 'managed' ? (
-            <Card className="bg-gray-50">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <DollarSign className="h-5 w-5" />
-                  Cost estimator
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <p className="text-sm text-gray-600">
-                    The cost of the recruitment will be estimated based on the selected options. The final price may be higher or lower.
-                  </p>
-                  
-                  <div className="bg-white p-4 rounded-lg">
-                    <p className="text-sm text-gray-600 mb-1">Estimated cost for {respondentCount} {audienceType.toUpperCase()} respondents (20 min):</p>
-                    <p className="text-3xl font-bold text-gray-900">${(respondentCount * (audienceType === 'b2b' ? 15 : 8)).toLocaleString()}</p>
-                  </div>
-                  
-                  <p className="text-sm text-gray-600">
-                    We will contact you with the final price before proceeding.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
+          {recruitmentType === 'self' || recruitmentType === 'combined' ? (
             <Card className="bg-green-50">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -278,6 +289,23 @@ const RecruitmentSetup = () => {
                     <p className="text-2xl font-bold text-gray-900">{respondentCount}</p>
                     <p className="text-sm text-green-600 font-medium">No recruitment fees</p>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="bg-gray-50 opacity-60">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <DollarSign className="h-5 w-5" />
+                  Cost estimator
+                  <Lock className="h-4 w-4 ml-auto" />
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-600">
+                    Available soon with managed recruitment feature.
+                  </p>
                 </div>
               </CardContent>
             </Card>

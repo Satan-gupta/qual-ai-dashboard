@@ -16,9 +16,10 @@ interface DashboardSidebarProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
   onNewStudy: () => void;
+  showNewStudy?: boolean;
 }
 
-const DashboardSidebar = ({ isCollapsed, activeTab, onTabChange, onNewStudy }: DashboardSidebarProps) => {
+const DashboardSidebar = ({ isCollapsed, activeTab, onTabChange, onNewStudy, showNewStudy }: DashboardSidebarProps) => {
   const sidebarItems: SidebarItem[] = [
     { id: 'dashboard', label: 'Dashboard', icon: <Home className="h-5 w-5" /> },
     { id: 'analysis', label: 'Analysis', icon: <BarChart3 className="h-5 w-5" /> },
@@ -27,22 +28,22 @@ const DashboardSidebar = ({ isCollapsed, activeTab, onTabChange, onNewStudy }: D
 
   return (
     <div className={cn(
-      "bg-white border-r border-gray-200 transition-all duration-300 flex flex-col shadow-lg",
+      "bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 flex flex-col shadow-lg",
       isCollapsed ? "w-16" : "w-64"
     )}>
       <div className="p-4">
         {!isCollapsed && (
           <div className="flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-orange-500 rounded-lg flex items-center justify-center shadow-md">
+            <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center shadow-md">
               <span className="text-white font-bold text-sm">Q</span>
             </div>
-            <span className="font-semibold text-gray-900">Qwalo.ai</span>
+            <span className="font-semibold text-gray-900 dark:text-white">Qwalo.ai</span>
           </div>
         )}
         
         <Button 
           className={cn(
-            "w-full justify-start gap-2 mb-4 bg-gradient-to-r from-blue-500 to-orange-500 hover:from-blue-600 hover:to-orange-600 text-white shadow-md",
+            "w-full justify-start gap-2 mb-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-md",
             isCollapsed && "px-2"
           )}
           onClick={onNewStudy}
@@ -60,9 +61,10 @@ const DashboardSidebar = ({ isCollapsed, activeTab, onTabChange, onNewStudy }: D
             className={cn(
               "w-full justify-start gap-3 mb-1 h-12 transition-colors",
               isCollapsed && "px-3",
-              activeTab === item.id && "bg-gradient-to-r from-blue-50 to-orange-50 text-blue-700 border-r-2 border-blue-500"
+              activeTab === item.id && "bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 text-orange-700 dark:text-orange-300 border-r-2 border-orange-500"
             )}
             onClick={() => onTabChange(item.id)}
+            disabled={showNewStudy && item.id !== 'dashboard'} // Enable all tabs even in new study mode
           >
             {item.icon}
             {!isCollapsed && (

@@ -5,9 +5,10 @@ import DashboardSidebar from '@/components/layout/DashboardSidebar';
 import StudySetup from '@/components/studies/StudySetup';
 import GuidingQuestions from '@/components/studies/GuidingQuestions';
 import RecruitmentSetup from '@/components/studies/RecruitmentSetup';
-import AnalyticsDashboard from '@/components/analysis/AnalyticsDashboard';
+import AnalysisPage from '@/components/analysis/AnalysisPage';
 import StudiesView from '@/components/dashboard/StudiesView';
 import FormReview from '@/components/studies/FormReview';
+import SettingsPage from '@/components/settings/SettingsPage';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -50,7 +51,7 @@ const Index = () => {
                       <div 
                         className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium cursor-pointer transition-all ${
                           step.id === currentStep 
-                            ? 'bg-gradient-to-r from-blue-500 to-orange-500 text-white shadow-lg' 
+                            ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg' 
                             : step.id < currentStep
                             ? 'bg-green-500 text-white'
                             : 'bg-gray-200 text-gray-600'
@@ -60,7 +61,7 @@ const Index = () => {
                         {step.id}
                       </div>
                       <span className={`ml-2 text-sm transition-colors ${
-                        step.id === currentStep ? 'text-blue-600 font-medium' : 'text-gray-600'
+                        step.id === currentStep ? 'text-orange-600 font-medium' : 'text-gray-600'
                       }`}>
                         {step.label}
                       </span>
@@ -92,7 +93,7 @@ const Index = () => {
             <Button 
               onClick={() => setCurrentStep(Math.min(steps.length, currentStep + 1))}
               disabled={currentStep === steps.length}
-              className="bg-gradient-to-r from-blue-500 to-orange-500 hover:from-blue-600 hover:to-orange-600 text-white"
+              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white"
             >
               Next
               <ChevronRight className="h-4 w-4 ml-2" />
@@ -103,40 +104,32 @@ const Index = () => {
     }
 
     if (activeTab === 'analysis') {
-      return <AnalyticsDashboard />;
+      return <AnalysisPage />;
     }
 
     if (activeTab === 'settings') {
-      return (
-        <div className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">Settings</h2>
-            <p className="text-gray-600">Manage your account and application settings</p>
-          </div>
-          
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Settings</h3>
-            <p className="text-gray-600">Settings panel coming soon...</p>
-          </div>
-        </div>
-      );
+      return <SettingsPage />;
     }
 
     return <StudiesView />;
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex w-full">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-orange-50 dark:from-gray-900 dark:to-gray-800 flex w-full">
       <DashboardSidebar 
         isCollapsed={sidebarCollapsed}
         activeTab={activeTab}
         onTabChange={setActiveTab}
         onNewStudy={() => setShowNewStudy(true)}
+        showNewStudy={showNewStudy}
       />
       
       <div className="flex-1 flex flex-col overflow-hidden">
         <DashboardHeader 
           onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+          activeTab={activeTab}
+          showNewStudy={showNewStudy}
+          currentStep={currentStep}
         />
         
         <main className="flex-1 overflow-auto">
