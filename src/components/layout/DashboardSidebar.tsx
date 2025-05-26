@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Home, FileText, BarChart3, Users, Settings, Plus, ChevronRight } from 'lucide-react';
+import { Home, BarChart3, Settings, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -9,21 +9,19 @@ interface SidebarItem {
   label: string;
   icon: React.ReactNode;
   active?: boolean;
-  badge?: number;
 }
 
 interface DashboardSidebarProps {
   isCollapsed: boolean;
   activeTab: string;
   onTabChange: (tab: string) => void;
+  onNewStudy: () => void;
 }
 
-const DashboardSidebar = ({ isCollapsed, activeTab, onTabChange }: DashboardSidebarProps) => {
+const DashboardSidebar = ({ isCollapsed, activeTab, onTabChange, onNewStudy }: DashboardSidebarProps) => {
   const sidebarItems: SidebarItem[] = [
     { id: 'dashboard', label: 'Dashboard', icon: <Home className="h-5 w-5" /> },
-    { id: 'studies', label: 'Studies', icon: <FileText className="h-5 w-5" />, badge: 3 },
     { id: 'analysis', label: 'Analysis', icon: <BarChart3 className="h-5 w-5" /> },
-    { id: 'participants', label: 'Participants', icon: <Users className="h-5 w-5" /> },
     { id: 'settings', label: 'Settings', icon: <Settings className="h-5 w-5" /> },
   ];
 
@@ -36,9 +34,9 @@ const DashboardSidebar = ({ isCollapsed, activeTab, onTabChange }: DashboardSide
         {!isCollapsed && (
           <div className="flex items-center gap-2 mb-6">
             <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">AI</span>
+              <span className="text-white font-bold text-sm">Q</span>
             </div>
-            <span className="font-semibold text-gray-900">Research Platform</span>
+            <span className="font-semibold text-gray-900">Qwalo.ai</span>
           </div>
         )}
         
@@ -47,6 +45,7 @@ const DashboardSidebar = ({ isCollapsed, activeTab, onTabChange }: DashboardSide
             "w-full justify-start gap-2 mb-4 bg-blue-500 hover:bg-blue-600",
             isCollapsed && "px-2"
           )}
+          onClick={onNewStudy}
         >
           <Plus className="h-4 w-4" />
           {!isCollapsed && "New Study"}
@@ -67,14 +66,7 @@ const DashboardSidebar = ({ isCollapsed, activeTab, onTabChange }: DashboardSide
           >
             {item.icon}
             {!isCollapsed && (
-              <>
-                <span className="flex-1 text-left">{item.label}</span>
-                {item.badge && (
-                  <span className="bg-gray-200 text-gray-700 text-xs rounded-full px-2 py-1">
-                    {item.badge}
-                  </span>
-                )}
-              </>
+              <span className="flex-1 text-left">{item.label}</span>
             )}
           </Button>
         ))}
