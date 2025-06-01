@@ -25,9 +25,22 @@ const Index = () => {
     { id: 4, label: 'Recruitment', component: RecruitmentSetup },
   ];
 
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    // Allow navigation even when in new study mode
+    if (tab !== 'dashboard') {
+      setShowNewStudy(false);
+    }
+  };
+
+  const handleEditQuestions = () => {
+    setCurrentStep(2); // Go back to Guiding Questions step
+  };
+
   const renderMainContent = () => {
     if (showNewStudy) {
       const CurrentStepComponent = steps.find(step => step.id === currentStep)?.component || StudySetup;
+      
       return (
         <div>
           {/* Progress Steps */}
@@ -35,7 +48,7 @@ const Index = () => {
             <div className="flex items-center justify-between mb-4">
               <Button 
                 variant="ghost" 
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+                className="flex items-center gap-2 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
                 onClick={() => setShowNewStudy(false)}
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -51,7 +64,7 @@ const Index = () => {
                       <div 
                         className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium cursor-pointer transition-all ${
                           step.id === currentStep 
-                            ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg' 
+                            ? 'bg-gradient-to-r from-orange to-orange-dark text-white shadow-lg' 
                             : step.id < currentStep
                             ? 'bg-green-500 text-white'
                             : 'bg-gray-200 text-gray-600'
@@ -61,7 +74,7 @@ const Index = () => {
                         {step.id}
                       </div>
                       <span className={`ml-2 text-sm transition-colors ${
-                        step.id === currentStep ? 'text-orange-600 font-medium' : 'text-gray-600'
+                        step.id === currentStep ? 'text-orange font-medium' : 'text-gray-600 dark:text-gray-300'
                       }`}>
                         {step.label}
                       </span>
@@ -77,10 +90,14 @@ const Index = () => {
             </div>
           </div>
 
-          <CurrentStepComponent />
+          {currentStep === 3 ? (
+            <FormReview onEditQuestions={handleEditQuestions} />
+          ) : (
+            <CurrentStepComponent />
+          )}
           
           {/* Navigation Buttons */}
-          <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
+          <div className="flex justify-between mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
             <Button 
               variant="outline"
               onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
@@ -93,7 +110,7 @@ const Index = () => {
             <Button 
               onClick={() => setCurrentStep(Math.min(steps.length, currentStep + 1))}
               disabled={currentStep === steps.length}
-              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white"
+              className="bg-gradient-to-r from-orange to-orange-dark hover:from-orange-dark hover:to-orange text-white"
             >
               Next
               <ChevronRight className="h-4 w-4 ml-2" />
@@ -119,7 +136,7 @@ const Index = () => {
       <DashboardSidebar 
         isCollapsed={sidebarCollapsed}
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
         onNewStudy={() => setShowNewStudy(true)}
         showNewStudy={showNewStudy}
       />

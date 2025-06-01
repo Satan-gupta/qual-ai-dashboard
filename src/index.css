@@ -14,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 24 74% 58%;
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -23,26 +23,31 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 24 70% 95%;
-    --accent-foreground: 24 74% 58%;
+    --accent: 217 91% 95%;
+    --accent-foreground: 217 91% 60%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 24 74% 58%;
+    --ring: 217 91% 60%;
 
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 24 74% 58%;
+    --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 24 70% 95%;
-    --sidebar-accent-foreground: 24 74% 58%;
+    --sidebar-accent: 217 91% 95%;
+    --sidebar-accent-foreground: 217 91% 60%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 24 74% 58%;
+    --sidebar-ring: 217 91% 60%;
+
+    --royal-blue: 217 91% 60%;
+    --royal-blue-dark: 217 91% 50%;
+    --orange: 25 95% 53%;
+    --orange-dark: 25 95% 43%;
   }
 
   .dark {
@@ -55,7 +60,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 24 74% 58%;
+    --primary: 217 91% 60%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -72,15 +77,20 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 24 74% 58%;
+    --ring: 217 91% 60%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 24 74% 58%;
+    --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 24 74% 58%;
+    --sidebar-ring: 217 91% 60%;
+
+    --royal-blue: 217 91% 60%;
+    --royal-blue-dark: 217 91% 70%;
+    --orange: 25 95% 53%;
+    --orange-dark: 25 95% 63%;
   }
 }
 
@@ -91,5 +101,40 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Custom utility classes for royal blue and orange theme */
+@layer utilities {
+  .bg-royal-blue {
+    background-color: hsl(var(--royal-blue));
+  }
+  
+  .bg-royal-blue-dark {
+    background-color: hsl(var(--royal-blue-dark));
+  }
+  
+  .bg-orange {
+    background-color: hsl(var(--orange));
+  }
+  
+  .bg-orange-dark {
+    background-color: hsl(var(--orange-dark));
+  }
+  
+  .text-royal-blue {
+    color: hsl(var(--royal-blue));
+  }
+  
+  .text-orange {
+    color: hsl(var(--orange));
+  }
+  
+  .border-royal-blue {
+    border-color: hsl(var(--royal-blue));
+  }
+  
+  .border-orange {
+    border-color: hsl(var(--orange));
   }
 }

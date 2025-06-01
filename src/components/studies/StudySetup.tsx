@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { Upload, Clock, Mail, Globe, X, ChevronDown } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Upload, Clock, Mail, Globe, X, ChevronDown, FileImage, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,10 +12,16 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useProjectStore } from '@/store/projectStore';
+import { handleFileUpload, formatFileSize, UploadedFile } from '@/utils/fileUpload';
 
 const StudySetup = () => {
-  const [selectedLanguages, setSelectedLanguages] = useState(['English', 'Hindi', 'Bengali', 'Gujarati']);
-  const [askEmail, setAskEmail] = useState(true);
+  const { projectData, updateProject } = useProjectStore();
+  const [selectedLanguages, setSelectedLanguages] = useState(projectData.languages);
+  const [askEmail, setAskEmail] = useState(projectData.askEmail);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const allLanguages = [
     'English', 'Hindi', 'Bengali', 'Gujarati', 'Tamil', 'Telugu', 'Odia', 'Marathi',
@@ -24,15 +30,60 @@ const StudySetup = () => {
   ];
 
   const removeLanguage = (language: string) => {
-    setSelectedLanguages(prev => prev.filter(lang => lang !== language));
+    const newLanguages = selectedLanguages.filter(lang => lang !== language);
+    setSelectedLanguages(newLanguages);
+    updateProject({ languages: newLanguages });
   };
 
   const toggleLanguage = (language: string) => {
-    setSelectedLanguages(prev => 
-      prev.includes(language) 
-        ? prev.filter(lang => lang !== language)
-        : [...prev, language]
-    );
+    const newLanguages = selectedLanguages.includes(language) 
+      ? selectedLanguages.filter(lang => lang !== language)
+      : [...selectedLanguages, language];
+    setSelectedLanguages(newLanguages);
+    updateProject({ languages: newLanguages });
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsUploading(true);
+    try {
+      const newFiles = await handleFileUpload(files);
+      setUploadedFiles(prev => [...prev, ...newFiles]);
+      updateProject({ welcomeImage: newFiles[0]?.url });
+    } catch (error) {
+      console.error('Upload failed:', error);
+      alert(error instanceof Error ? error.message : 'Upload failed');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const files = event.dataTransfer.files;
+    if (!files || files.length === 0) return;
+
+    setIsUploading(true);
+    try {
+      const newFiles = await handleFileUpload(files);
+      setUploadedFiles(prev => [...prev, ...newFiles]);
+      updateProject({ welcomeImage: newFiles[0]?.url });
+    } catch (error) {
+      console.error('Upload failed:', error);
+      alert(error instanceof Error ? error.message : 'Upload failed');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+  };
+
+  const removeFile = (fileId: string) => {
+    setUploadedFiles(prev => prev.filter(f => f.id !== fileId));
   };
 
   const displayedLanguages = selectedLanguages.slice(0, 4);
@@ -42,45 +93,51 @@ const StudySetup = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">New Project</h2>
-          <p className="text-gray-600">Configure the basic settings for your project</p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">New Project</h2>
+          <p className="text-gray-600 dark:text-gray-300">Configure the basic settings for your project</p>
         </div>
-        <Button className="bg-gradient-to-r from-blue-500 to-orange-500 hover:from-blue-600 hover:to-orange-600 text-white">Test project</Button>
+        <Button className="bg-gradient-to-r from-royal-blue to-orange hover:from-royal-blue-dark hover:to-orange-dark text-white">
+          Test project
+        </Button>
       </div>
 
-      <Card className="border-l-4 border-l-blue-500">
-        <CardHeader>
+      <Card className="border-l-4 border-l-royal-blue shadow-lg">
+        <CardHeader className="bg-gradient-to-r from-blue-50 to-orange-50 dark:from-blue-900/20 dark:to-orange-900/20">
           <CardTitle className="flex items-center gap-2">
-            <span className="w-6 h-6 bg-gradient-to-r from-blue-500 to-orange-500 text-white rounded-full flex items-center justify-center text-sm">1</span>
+            <span className="w-6 h-6 bg-gradient-to-r from-royal-blue to-orange text-white rounded-full flex items-center justify-center text-sm">1</span>
             Project Setup
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6 p-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Project name</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Project name</label>
             <Input 
-              defaultValue="Product feedback for new Smart Watch" 
-              className="w-full focus:border-blue-500"
+              value={projectData.name}
+              onChange={(e) => updateProject({ name: e.target.value })}
+              className="w-full focus:border-royal-blue"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
             <Textarea 
+              value={projectData.description}
+              onChange={(e) => updateProject({ description: e.target.value })}
               placeholder="Provide a brief description of the project to the respondent. (max 1000 characters)"
-              className="w-full min-h-[100px] focus:border-blue-500"
+              className="w-full min-h-[100px] focus:border-royal-blue"
               maxLength={1000}
             />
-            <div className="text-right text-sm text-gray-500 mt-1">0 / 1000 characters</div>
+            <div className="text-right text-sm text-gray-500 mt-1">{projectData.description.length} / 1000 characters</div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               How long should each interview (approximately) take?
             </label>
             <Input 
-              defaultValue="20 minutes" 
-              className="w-full focus:border-blue-500"
+              value={projectData.duration}
+              onChange={(e) => updateProject({ duration: e.target.value })}
+              className="w-full focus:border-royal-blue"
             />
           </div>
 
@@ -89,23 +146,26 @@ const StudySetup = () => {
               type="checkbox" 
               id="askEmail" 
               checked={askEmail}
-              onChange={(e) => setAskEmail(e.target.checked)}
-              className="w-4 h-4 text-blue-600 accent-blue-500"
+              onChange={(e) => {
+                setAskEmail(e.target.checked);
+                updateProject({ askEmail: e.target.checked });
+              }}
+              className="w-4 h-4 text-royal-blue accent-royal-blue"
             />
-            <label htmlFor="askEmail" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-              <Mail className="h-4 w-4 text-orange-500" />
+            <label htmlFor="askEmail" className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+              <Mail className="h-4 w-4 text-orange" />
               Ask respondent's email
             </label>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-              <Globe className="h-4 w-4 text-orange-500" />
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+              <Globe className="h-4 w-4 text-orange" />
               Respondent languages
             </label>
             <div className="flex flex-wrap gap-2 mb-2">
               {displayedLanguages.map((language) => (
-                <Badge key={language} variant="secondary" className="flex items-center gap-1 bg-blue-50 text-blue-700 border-blue-200">
+                <Badge key={language} variant="secondary" className="flex items-center gap-1 bg-blue-50 text-royal-blue border-royal-blue/20">
                   {language}
                   <button onClick={() => removeLanguage(language)}>
                     <X className="h-3 w-3" />
@@ -113,14 +173,14 @@ const StudySetup = () => {
                 </Badge>
               ))}
               {additionalCount > 0 && (
-                <Badge variant="outline" className="text-orange-600 border-orange-200">
+                <Badge variant="outline" className="text-orange border-orange/20">
                   + {additionalCount} more
                 </Badge>
               )}
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2 border-blue-200 text-blue-600 hover:bg-blue-50">
+                <Button variant="outline" className="flex items-center gap-2 border-royal-blue/20 text-royal-blue hover:bg-blue-50">
                   Add Languages
                   <ChevronDown className="h-4 w-4" />
                 </Button>
@@ -140,12 +200,52 @@ const StudySetup = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Welcome page image</label>
-            <div className="border-2 border-dashed border-blue-300 rounded-lg p-8 text-center bg-gradient-to-br from-blue-50 to-orange-50">
-              <Upload className="h-8 w-8 text-orange-500 mx-auto mb-2" />
-              <p className="text-gray-600 mb-1">Drag files</p>
-              <p className="text-sm text-gray-500">Click to upload files (must be under 10 MB.)</p>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Welcome page image</label>
+            <div 
+              className="border-2 border-dashed border-royal-blue/30 rounded-lg p-8 text-center bg-gradient-to-br from-blue-50 to-orange-50 dark:from-blue-900/20 dark:to-orange-900/20 cursor-pointer hover:border-royal-blue/50 transition-colors"
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload className="h-8 w-8 text-orange mx-auto mb-2" />
+              <p className="text-gray-600 dark:text-gray-300 mb-1">
+                {isUploading ? 'Uploading...' : 'Drag files or click to upload'}
+              </p>
+              <p className="text-sm text-gray-500">Files must be under 10 MB</p>
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+              />
             </div>
+            
+            {uploadedFiles.length > 0 && (
+              <div className="mt-4 space-y-2">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Uploaded Files:</h4>
+                {uploadedFiles.map((file) => (
+                  <div key={file.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <FileImage className="h-5 w-5 text-royal-blue" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{file.name}</p>
+                        <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeFile(file.id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
